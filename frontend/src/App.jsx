@@ -4,6 +4,8 @@ import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import GeneralChat from './pages/GeneralChat';
 import HireLawyer from './pages/HireLawyer';
+import SignIn from './pages/auth/SignIn';
+import SignUp from './pages/auth/Signup';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import { Globe } from 'lucide-react';
 
@@ -32,6 +34,8 @@ function App() {
             <Route path="/dashboard/:documentId" element={<Dashboard />} />
             <Route path="/chat" element={<GeneralChat />} />
             <Route path="/lawyers" element={<HireLawyer />} />
+            <Route path="/signUp" element={<SignUp />} />
+            <Route path="/signIn" element={<SignIn />} />
           </Routes>
           
           {/* Pinned Controls Layout */}
