@@ -477,7 +477,8 @@ export default function HireLawyer() {
                              bg-gradient-to-r from-nyaya-500 to-blue-600
                              shadow-[0_0_25px_rgba(37,99,235,0.22)]
                              transition-all duration-300
-                             hover:scale-[1.02] active:scale-[0.99]"
+                             hover:scale-[1.02] active:scale-[0.99]
+                             flex items-center justify-center gap-2"
                 >
                   <span className="inline-flex items-center justify-center gap-2">
                     <Calendar className="w-4 h-4" /> {t("lawyers.book")}
