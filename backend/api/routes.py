@@ -134,6 +134,7 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/analyze/{document_id}")
+async def analyze_document(request: Request, document_id: str, language: str = "en", force_ocr: bool = False, file: UploadFile = File(None)):
 async def analyze_document(
     document_id: str,
     language: str = "en",
@@ -144,6 +145,21 @@ async def analyze_document(
     """
 
     try:
+        session_id = require_session_id(request)
+        record = require_document_owner(document_id, session_id)
+        # ── Cache-first ──────────────────────────────────────────────────────────
+        if not force_ocr:
+            cached = get_cached_analysis(document_id, language)
+            if cached:
+                logger.info(f"Cache HIT for document {document_id} [{language}]")
+                return {
+                    "documentId": document_id,
+                    "analysis": cached["analysis"],
+                    "extracted_text": cached["extracted_text"][:500] + "...",
+                    "cached": True
+                }
+        # ── Cache MISS: run the full pipeline ────────────────────────────────────
+        # Simplify MVP: if file is not provided, we download it from local storage via SQLite metadata.
         # ── Cache-first ─────────────────────────────────────────────────────
         cached = get_cached_analysis(document_id, language)
 
@@ -190,6 +206,8 @@ async def analyze_document(
             filename = file.filename
 
         # 1. OCR Extraction
+        text = extract_document(contents, filename, force_ocr=force_ocr)
+        
         text = extract_document(contents, filename)
 
         # 2. RAG Retrieval
